@@ -1,0 +1,10 @@
+[package]
+name = "rustris"
+version = "0.1.0"
+authors = ["Jean Roström <jean@rostrom.se>"]
+edition = "2018"
+
+[dependencies]
+termion = "1"
+rand = "0.6"
+
