@@ -64,7 +64,6 @@ fn remove_filled_rows(map: &mut Vec<Vec<char>>) {
     }
 }
 
-//fn check_collision(display: &Vec<Vec<char>>, current_piece: &Vec<Vec<i8>> , x_pos: usize, y_pos: usize) -> bool {
 fn check_collision(display: &Vec<Vec<char>>, current_piece: &[[i32; 4]; 4] , x_pos: usize, y_pos: usize) -> bool {
     for y in 0..current_piece.len() {
         for x in 0..current_piece[0].len() {
