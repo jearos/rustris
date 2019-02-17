@@ -96,12 +96,15 @@ fn print_piece(map: &mut Vec<Vec<char>>, current_piece: &[[i32; 4]; 4] , x_pos: 
     }
 }
 
+fn get_random_piece() -> [[[i32; 4]; 4]; 4] {
+    pieces::SRS[rand::thread_rng().gen_range(0, pieces::SRS.len())]
+}
+
 fn main() {
     let x_size = 12;
     let y_size = 11;
     let mut speed = 0;
     let mut map: Vec<Vec<char>> = vec![vec![' '; y_size]; x_size];
-    let pieces = [pieces::SRS_I, pieces::SRS_J, pieces::SRS_L, pieces::SRS_O, pieces::SRS_S, pieces::SRS_T, pieces::SRS_Z];
     let mut rotation_index = 1;
 
     let stdout = stdout();
@@ -115,7 +118,7 @@ fn main() {
         map[1][y] = '*';
     }
 
-    let mut current_piece = pieces[rand::thread_rng().gen_range(0, pieces.len()-1)];
+    let mut current_piece = get_random_piece();
 
     loop {
         let mut display = map.clone();
@@ -171,8 +174,7 @@ fn main() {
                 // Spawn new block
                 y_pos = 0;
                 x_pos = 5;
-                current_piece = pieces[rand::thread_rng().gen_range(0, pieces.len())];
-
+                current_piece = get_random_piece();
                 // Check if the spawn block is blocked => game over
                 if check_collision(&map, &current_piece[rotation_index], x_pos, y_pos) == true {
                     return;
