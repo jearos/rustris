@@ -19,8 +19,8 @@ fn display_map(stdout: &mut termion::raw::RawTerminal<std::io::StdoutLock<'_>>, 
     write!(stdout, "+").unwrap();
 
     let display = map.clone();
-    for y in 0..map[0].len() {
-        write!(stdout, "{}", termion::cursor::Goto(1,  (y+2) as u16)).unwrap();
+    for y in 2..map[0].len() {
+        write!(stdout, "{}", termion::cursor::Goto(1,  (y) as u16)).unwrap();
         write!(stdout, "|").unwrap();
         for x in 2..map.len() {
             if display[x][y] == '*' {
@@ -32,7 +32,7 @@ fn display_map(stdout: &mut termion::raw::RawTerminal<std::io::StdoutLock<'_>>, 
         write!(stdout, "|").unwrap();
     }
 
-    write!(stdout, "{}+", termion::cursor::Goto(1, map[0].len() as u16 + 2)).unwrap();
+    write!(stdout, "{}+", termion::cursor::Goto(1, map[0].len() as u16)).unwrap();
     for _x in 0..map.len()-2 {
         write!(stdout, "-", ).unwrap();
     }
@@ -101,11 +101,11 @@ fn get_random_piece() -> [[[i32; 4]; 4]; 4] {
 }
 
 fn main() {
-    let x_size = 12;
-    let y_size = 11;
+    let x_size = 10+2;
+    let y_size = 11+2;
     let mut speed = 0;
     let mut map: Vec<Vec<char>> = vec![vec![' '; y_size]; x_size];
-    let mut rotation_index = 1;
+    let mut rotation_index = 0;
 
     let stdout = stdout();
     let mut stdout = stdout.lock().into_raw_mode().unwrap();
