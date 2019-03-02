@@ -43,6 +43,19 @@ fn display_score(stdout: &mut termion::raw::RawTerminal<std::io::StdoutLock<'_>>
     write!(stdout, "{}lines: {}", termion::cursor::Goto(x_pos as u16,  y_pos as u16), score).unwrap();
 }
 
+fn display_next_piece(stdout: &mut termion::raw::RawTerminal<std::io::StdoutLock<'_>>, current_piece: &[[i32; 4]; 4] , x_pos: usize, y_pos: usize) {
+    for y in 0..current_piece.len() {
+        write!(stdout, "{}", termion::cursor::Goto(x_pos as u16,  (y_pos + y) as u16)).unwrap();
+        for x in 0..current_piece[0].len() {
+            if current_piece[y][x] == 1 {
+                write!(stdout, "*").unwrap();
+            } else {
+                write!(stdout, " ").unwrap();
+            }
+        }
+    }
+}
+
 fn is_row_filled(map: &mut Vec<Vec<char>>, row: usize) -> bool {
     for x in 2..map.len() {
         if map[x][row] != '*' {
@@ -127,6 +140,7 @@ fn main() {
     }
 
     let mut current_piece = get_random_piece();
+    let mut next_piece = get_random_piece();
 
     loop {
         let mut display = map.clone();
@@ -135,6 +149,7 @@ fn main() {
 
         display_map(&mut stdout, &display);
         display_score(&mut stdout, x_size + 2, 1, &score);
+        display_next_piece(&mut stdout, &next_piece[0], x_size + 2, 2);
         stdout.flush().unwrap();
 
         match stdin.next() {
@@ -183,7 +198,9 @@ fn main() {
                 // Spawn new block
                 y_pos = 0;
                 x_pos = 5;
-                current_piece = get_random_piece();
+                rotation_index = 0;
+                current_piece = next_piece;
+                next_piece = get_random_piece();
                 // Check if the spawn block is blocked => game over
                 if check_collision(&map, &current_piece[rotation_index], x_pos, y_pos) == true {
                     return;
