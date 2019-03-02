@@ -39,6 +39,10 @@ fn display_map(stdout: &mut termion::raw::RawTerminal<std::io::StdoutLock<'_>>, 
     write!(stdout, "+").unwrap();
 }
 
+fn display_score(stdout: &mut termion::raw::RawTerminal<std::io::StdoutLock<'_>>, x_pos: usize, y_pos: usize, score: &u8) {
+    write!(stdout, "{}lines: {}", termion::cursor::Goto(x_pos as u16,  y_pos as u16), score).unwrap();
+}
+
 fn is_row_filled(map: &mut Vec<Vec<char>>, row: usize) -> bool {
     for x in 2..map.len() {
         if map[x][row] != '*' {
@@ -59,12 +63,15 @@ fn shift_rows_down(map: &mut Vec<Vec<char>>, row: usize) {
     }
 }
 
-fn remove_filled_rows(map: &mut Vec<Vec<char>>) {
+fn remove_filled_rows(map: &mut Vec<Vec<char>>) -> u8 {
+    let mut nof_lines = 0;
     for y in 0..map[0].len() {
         if is_row_filled(map, y) {
             shift_rows_down(map, y);
+            nof_lines += 1;
         }
     }
+    nof_lines
 }
 
 fn check_collision(display: &Vec<Vec<char>>, current_piece: &[[i32; 4]; 4] , x_pos: usize, y_pos: usize) -> bool {
@@ -104,6 +111,7 @@ fn main() {
     let x_size = 10+2;
     let y_size = 11+2;
     let mut speed = 0;
+    let mut score = 0;
     let mut map: Vec<Vec<char>> = vec![vec![' '; y_size]; x_size];
     let mut rotation_index = 0;
 
@@ -126,6 +134,8 @@ fn main() {
         print_piece(&mut display, &current_piece[rotation_index], x_pos, y_pos);
 
         display_map(&mut stdout, &display);
+        display_score(&mut stdout, x_size + 2, 1, &score);
+        stdout.flush().unwrap();
 
         match stdin.next() {
             Some(Ok(b'a')) => {
@@ -160,7 +170,6 @@ fn main() {
             Some(Ok(b'q')) => break,
             _ => {}
         }
-        stdout.flush().unwrap();
         thread::sleep(Duration::from_millis(10));
 
         speed += 1;
@@ -169,7 +178,7 @@ fn main() {
             // Check if we hit bottom
             if check_collision(&map, &current_piece[rotation_index], x_pos, y_pos + 1) == true {
                 print_piece(&mut map, &current_piece[rotation_index], x_pos, y_pos);
-                remove_filled_rows(&mut map);
+                score += remove_filled_rows(&mut map);
 
                 // Spawn new block
                 y_pos = 0;
