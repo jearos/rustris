@@ -171,8 +171,10 @@ fn main() {
                 }
             }
             Some(Ok(b'w')) => {
-                if rotation_index == 0 && check_collision(&map, &current_piece[3], x_pos, y_pos) == false {
-                    rotation_index = 3;
+                if rotation_index == 0 {
+                    if check_collision(&map, &current_piece[3], x_pos, y_pos) == false {
+                        rotation_index = 3;
+                    }
                 } else if check_collision(&map, &current_piece[rotation_index-1], x_pos, y_pos) == false {
                     rotation_index = rotation_index-1;
                 }
